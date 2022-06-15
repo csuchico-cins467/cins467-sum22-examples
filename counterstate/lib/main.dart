@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MyApp());
@@ -48,19 +49,69 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  // int _counter = 0;
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  late Future<int> _counter;
 
-  void _incrementCounter() {
+  Future<void> _incrementCounter() async {
+    final SharedPreferences prefs = await _prefs;
+    // int counter = 0;
+    // if (prefs.getInt('counter') != null) {
+    //   counter = prefs.getInt('counter')!;
+    // }
+    // counter += 1;
+    final int counter = (prefs.getInt('counter') ?? 0) + 1;
+
     setState(() {
-      _counter++;
+      _counter = prefs.setInt('counter', counter).then((bool success) {
+        if (success) {
+          return counter;
+        } else {
+          return -1;
+        }
+      });
     });
   }
 
-  void _decrementCounter() {
+  Future<void> _decrementCounter() async {
+    final SharedPreferences prefs = await _prefs;
+    // int counter = 0;
+    // if (prefs.getInt('counter') != null) {
+    //   counter = prefs.getInt('counter')!;
+    // }
+    // counter += 1;
+    final int counter = (prefs.getInt('counter') ?? 0) - 1;
+
     setState(() {
-      _counter--;
+      _counter = prefs.setInt('counter', counter).then((bool success) {
+        if (success) {
+          return counter;
+        } else {
+          return -1;
+        }
+      });
     });
   }
+
+  @override
+  void initState() {
+    super.initState();
+    _counter = _prefs.then((SharedPreferences prefs) {
+      return prefs.getInt('counter') ?? 0;
+    });
+  }
+
+  // void _incrementCounter() {
+  //   setState(() {
+  //     _counter++;
+  //   });
+  // }
+
+  // void _decrementCounter() {
+  //   setState(() {
+  //     _counter--;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -111,17 +162,34 @@ class _MyHomePageState extends State<MyHomePage> {
     list.add(const Text(
       'The count is:',
     ));
-    list.add(Text(
-      '$_counter',
-      style: Theme.of(context).textTheme.headline4,
-    ));
+    // list.add(Text(
+    //   '$_counter',
+    //   style: Theme.of(context).textTheme.headline4,
+    // ));
+    list.add(FutureBuilder<int>(
+        future: _counter,
+        builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return const CircularProgressIndicator();
+            default:
+              if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                return Text(
+                  '${snapshot.data}',
+                  style: Theme.of(context).textTheme.headline4,
+                );
+              }
+          }
+        }));
     list.add(Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       ElevatedButton(
-        onPressed: _counter > 0 ? _decrementCounter : null,
+        onPressed: _decrementCounter,
         child: const Icon(Icons.remove),
       ),
       ElevatedButton(
-        onPressed: _counter < 10 ? _incrementCounter : null,
+        onPressed: _incrementCounter,
         child: const Icon(Icons.add),
       )
     ]));
