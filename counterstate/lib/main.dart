@@ -1,5 +1,5 @@
+import 'package:counterstate/storage.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,13 +25,14 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.deepPurple,
       ),
-      home: const MyHomePage(title: 'CINS467 Awesome App'),
+      home: MyHomePage(title: 'CINS467 Awesome App', storage: CounterStorage()),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({Key? key, required this.title, required this.storage})
+      : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -43,75 +44,38 @@ class MyHomePage extends StatefulWidget {
   // always marked "final".
 
   final String title;
+  final CounterStorage storage;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // int _counter = 0;
-  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   late Future<int> _counter;
 
   Future<void> _incrementCounter() async {
-    final SharedPreferences prefs = await _prefs;
-    // int counter = 0;
-    // if (prefs.getInt('counter') != null) {
-    //   counter = prefs.getInt('counter')!;
-    // }
-    // counter += 1;
-    final int counter = (prefs.getInt('counter') ?? 0) + 1;
-
+    int counter = await widget.storage.readCounter();
+    counter += 1;
+    await widget.storage.writeCounter(counter);
     setState(() {
-      _counter = prefs.setInt('counter', counter).then((bool success) {
-        if (success) {
-          return counter;
-        } else {
-          return -1;
-        }
-      });
+      _counter = widget.storage.readCounter();
     });
   }
 
   Future<void> _decrementCounter() async {
-    final SharedPreferences prefs = await _prefs;
-    // int counter = 0;
-    // if (prefs.getInt('counter') != null) {
-    //   counter = prefs.getInt('counter')!;
-    // }
-    // counter += 1;
-    final int counter = (prefs.getInt('counter') ?? 0) - 1;
-
+    int counter = await widget.storage.readCounter();
+    counter -= 1;
+    await widget.storage.writeCounter(counter);
     setState(() {
-      _counter = prefs.setInt('counter', counter).then((bool success) {
-        if (success) {
-          return counter;
-        } else {
-          return -1;
-        }
-      });
+      _counter = widget.storage.readCounter();
     });
   }
 
   @override
   void initState() {
     super.initState();
-    _counter = _prefs.then((SharedPreferences prefs) {
-      return prefs.getInt('counter') ?? 0;
-    });
+    _counter = widget.storage.readCounter();
   }
-
-  // void _incrementCounter() {
-  //   setState(() {
-  //     _counter++;
-  //   });
-  // }
-
-  // void _decrementCounter() {
-  //   setState(() {
-  //     _counter--;
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
