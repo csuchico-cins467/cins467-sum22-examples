@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:counterstate/storage.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -130,6 +132,20 @@ class _MyHomePageState extends State<MyHomePage> {
     //   '$_counter',
     //   style: Theme.of(context).textTheme.headline4,
     // ));
+    if (widget.storage.isInitalized) {
+      list.add(StreamBuilder(
+          stream: FirebaseFirestore.instance.collection("example").snapshots(),
+          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) {
+              return Text(snapshot.error.toString());
+            }
+            if (!snapshot.hasData) return CircularProgressIndicator();
+            return Text(
+              '${snapshot.data!.docs[0]["count"]}',
+              style: Theme.of(context).textTheme.headline4,
+            );
+          }));
+    }
     list.add(FutureBuilder<int>(
         future: _counter,
         builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
