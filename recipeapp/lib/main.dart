@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -5,8 +7,14 @@ import 'dart:convert' as convert;
 
 import 'package:url_launcher/url_launcher.dart';
 
+import 'android/androidmain.dart';
+
 void main() {
-  runApp(const MyApp());
+  if (kIsWeb) {
+    runApp(const MyApp());
+  } else if (Platform.isAndroid) {
+    runApp(const MyAndroidApp());
+  }
 }
 
 class MyApp extends StatelessWidget {

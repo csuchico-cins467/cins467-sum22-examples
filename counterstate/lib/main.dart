@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:core';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:counterstate/storage.dart';
@@ -165,8 +166,9 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
+          // Center is a layout widget. It takes a single child and positions it
+          // in the middle of the parent.
+          child: SingleChildScrollView(
         child: Column(
           // Column is also a layout widget. It takes a list of children and
           // arranges them vertically. By default, it sizes itself to fit its
@@ -185,7 +187,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: getBody(),
         ),
-      ),
+      )),
       floatingActionButton: FloatingActionButton(
         onPressed: _getImage,
         tooltip: 'Add a photo',
@@ -196,6 +198,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<Widget> getBody() {
     List<Widget> list = List.empty(growable: true);
+    list.add(Text(DateTime.now().toIso8601String()));
     _image == null
         ? list.add(
             Container(
@@ -214,6 +217,14 @@ class _MyHomePageState extends State<MyHomePage> {
             width: 200.0,
             height: 200.0,
           ));
+    _image == null
+        ? list.add(
+            Placeholder(
+              child: Image.network(
+                  "https://st3.depositphotos.com/6672868/13701/v/600/depositphotos_137014128-stock-illustration-user-profile-icon.jpg"),
+            ),
+          )
+        : list.add(Image.file(_image!));
     list.add(FutureBuilder<Position>(
         future: _position,
         builder: (BuildContext context, AsyncSnapshot<Position> snapshot) {
