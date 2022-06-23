@@ -197,8 +197,23 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Widget> getBody() {
     List<Widget> list = List.empty(growable: true);
     _image == null
-        ? list.add(CircularProgressIndicator())
-        : list.add(Image.file(_image!));
+        ? list.add(
+            Container(
+              margin: const EdgeInsets.all(10.0),
+              child: Placeholder(
+                child: Image.network(
+                    "https://st3.depositphotos.com/6672868/13701/v/600/depositphotos_137014128-stock-illustration-user-profile-icon.jpg"),
+              ),
+              width: 200.0,
+              height: 200.0,
+            ),
+          )
+        : list.add(Container(
+            margin: const EdgeInsets.all(10.0),
+            child: Image.file(_image!),
+            width: 200.0,
+            height: 200.0,
+          ));
     list.add(FutureBuilder<Position>(
         future: _position,
         builder: (BuildContext context, AsyncSnapshot<Position> snapshot) {
