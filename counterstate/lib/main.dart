@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:counterstate/storage.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:geolocator/geolocator.dart';
+import 'package:image_picker/image_picker.dart';
 
 void main() {
   runApp(const MyApp());
@@ -59,6 +61,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   late Future<int> _counter;
   late Future<Position> _position;
+  File? _image;
 
   Future<void> _incrementCounter() async {
     int counter = await widget.storage.readCounter();
@@ -66,6 +69,22 @@ class _MyHomePageState extends State<MyHomePage> {
     await widget.storage.writeCounter(counter);
     setState(() {
       _counter = widget.storage.readCounter();
+    });
+  }
+
+  void _getImage() async {
+    final ImagePicker _picker = ImagePicker();
+    // Pick an image
+    final XFile? pickedImage =
+        await _picker.pickImage(source: ImageSource.camera);
+    setState(() {
+      if (pickedImage != null) {
+        _image = File(pickedImage.path);
+      } else {
+        if (kDebugMode) {
+          print('No image selected.');
+        }
+      }
     });
   }
 
@@ -129,17 +148,6 @@ class _MyHomePageState extends State<MyHomePage> {
       accuracy: LocationAccuracy.high,
       distanceFilter: 100,
     );
-    Geolocator.getPositionStream(locationSettings: locationSettings)
-        .listen((Position? position) {
-      if (kDebugMode) {
-        if (position != null) {
-          //calculate distance from target 39.72545, -121.80228
-        }
-        print(position == null
-            ? 'Unknown'
-            : '${position.latitude.toString()}, ${position.longitude.toString()}');
-      }
-    });
   }
 
   @override
@@ -179,8 +187,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
+        onPressed: _getImage,
+        tooltip: 'Add a photo',
         child: const Icon(Icons.add_a_photo),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
@@ -188,6 +196,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<Widget> getBody() {
     List<Widget> list = List.empty(growable: true);
+    _image == null
+        ? list.add(CircularProgressIndicator())
+        : list.add(Image.file(_image!));
     list.add(FutureBuilder<Position>(
         future: _position,
         builder: (BuildContext context, AsyncSnapshot<Position> snapshot) {

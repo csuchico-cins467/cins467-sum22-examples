@@ -28,6 +28,12 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Steal all your photos</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Watch you</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Advertise things you talked about</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app needs access to location when open.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
