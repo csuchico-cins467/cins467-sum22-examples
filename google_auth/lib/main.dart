@@ -116,7 +116,9 @@ class _MyHomePageState extends State<MyHomePage> {
           const Text('You are not currently signed in.'),
           ElevatedButton(
             onPressed: _handleSignIn,
-            child: const Text('SIGN IN'),
+            child: Image(
+                image: AssetImage(
+                    'images/btn_google_signin_dark_focus_web@2x.png')),
           ),
         ],
       );
