@@ -17,10 +17,8 @@ class SecondRoute extends StatelessWidget {
           ElevatedButton(
             child: const Text('Push Second Route'),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SecondRoute()),
-              );
+              Navigator.pushNamedAndRemoveUntil(
+                  context, '/second', ModalRoute.withName('/'));
             },
           ),
           ElevatedButton(
@@ -28,6 +26,12 @@ class SecondRoute extends StatelessWidget {
               Navigator.pop(context);
             },
             child: const Text('Go back!'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.popUntil(context, ModalRoute.withName('/'));
+            },
+            child: const Text('Start Over!'),
           ),
         ],
       )),

@@ -19,7 +19,7 @@ Widget getDrawer(context) {
           child: Text('Pages'),
         ),
         ListTile(
-          title: const Text('Page 1'),
+          title: const Text('Home'),
           onTap: () {
             // Update the state of the app
             // ...
@@ -27,17 +27,16 @@ Widget getDrawer(context) {
             // Navigator.push(context,
             //     MaterialPageRoute(builder: (context) => const FirstRoute()));
             //not named
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => FirstRoute()),
-                (Route<dynamic> route) => false);
+            // Navigator.pushNamed(context, '/');
+            Navigator.popUntil(context, ModalRoute.withName('/'));
           },
         ),
         ListTile(
           title: const Text('Page 2'),
           onTap: () {
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => SecondRoute()),
-                (Route<dynamic> route) => false);
+            // Navigator.pushNamed(context, '/second');
+            Navigator.pushNamedAndRemoveUntil(
+                context, '/second', ModalRoute.withName('/'));
             // Navigator.push(context,
             //     MaterialPageRoute(builder: (context) => const SecondRoute()));
           },
