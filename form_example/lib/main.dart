@@ -44,6 +44,22 @@ class MyHomePage extends StatefulWidget {
 
   final String title;
 
+  String? textValidator(value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter some text';
+    }
+    if (value.toString().startsWith("hi")) {
+      return "Input can't start with hi";
+    }
+    if (value.toString().startsWith("bob")) {
+      return "Input can't start with bob";
+    }
+    if (value.toString().length < 10) {
+      return "Input must be more than 10 chars";
+    }
+    return null;
+  }
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -67,16 +83,6 @@ class _MyHomePageState extends State<MyHomePage> {
       );
       setState(() {});
     }
-  }
-
-  String? textValidator(value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter some text';
-    }
-    if (value.toString().startsWith("bob")) {
-      return "can't start with bob";
-    }
-    return null;
   }
 
   @override
@@ -110,7 +116,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   labelText: 'Some Text*',
                 ),
                 // The validator receives the text that the user has entered.
-                validator: textValidator,
+                validator: widget.textValidator,
               ),
               TextFormField(
                 decoration: const InputDecoration(
@@ -119,7 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   labelText: 'Some Text*',
                 ),
                 // The validator receives the text that the user has entered.
-                validator: textValidator,
+                validator: widget.textValidator,
               ),
               ElevatedButton(
                 onPressed: submit,
